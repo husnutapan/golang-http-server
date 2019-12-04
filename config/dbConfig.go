@@ -1,8 +1,8 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )
 
@@ -14,8 +14,9 @@ const (
 	name = "golang"
 )
 
-func Init() {
-	var db *sql.DB
+var db *gorm.DB
+
+func Init() *gorm.DB {
 	var err error
 
 	config := initialDbConfig()
@@ -24,17 +25,13 @@ func Init() {
 		config[host], config[port],
 		config[user], config[pass], config[name])
 
-	db, err = sql.Open("postgres", sqlFormat)
+	conn, err := gorm.Open("postgres", sqlFormat)
 	if err != nil {
 		panic(err)
 	}
-
-	err = db.Ping()
-
-	if err != nil {
-		panic(err)
-	}
+	db = conn
 	fmt.Println("Successfully ping to database")
+	return db
 }
 
 func initialDbConfig() map[string]string {

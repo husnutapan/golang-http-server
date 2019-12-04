@@ -5,15 +5,15 @@ import (
 	"github.com/gorilla/mux"
 	"golang-http-server/config"
 	"golang-http-server/controller"
+	"golang-http-server/models"
 	"net/http"
 	"os"
 )
 
 func main() {
-	config.Init()
-
+	db := config.Init()
+	db.Debug().AutoMigrate(&models.Employee{})
 	router := mux.NewRouter()
-
 	router.HandleFunc("/api/employee/create", controller.CreateEmployee).Methods("POST")
 	router.HandleFunc("/api/employee/getAll", controller.GetAllEmployees).Methods("GET")
 
